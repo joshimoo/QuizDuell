@@ -1,0 +1,3 @@
+﻿Think about adding Example usages of the api.
+Fix Android UploadAnswers, there is a problem with the auth code / post_params
+Think about using static classes for the json de/serialization instead of the current dynamic approach.

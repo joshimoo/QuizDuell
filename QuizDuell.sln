@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizDuellBot", "QuizDuellBot\QuizDuellBot.csproj", "{1C369697-B678-46A1-B8F4-981101950462}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizDuellApi", "QuizDuellApi\QuizDuellApi.csproj", "{0D51F5A6-D367-4AFE-8DDC-42DA368A9811}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizDuellTest", "QuizDuellTest\QuizDuellTest.csproj", "{7A3FC10D-FF50-4D64-86B8-1B0FE5363D85}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C369697-B678-46A1-B8F4-981101950462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C369697-B678-46A1-B8F4-981101950462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C369697-B678-46A1-B8F4-981101950462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C369697-B678-46A1-B8F4-981101950462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D51F5A6-D367-4AFE-8DDC-42DA368A9811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D51F5A6-D367-4AFE-8DDC-42DA368A9811}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D51F5A6-D367-4AFE-8DDC-42DA368A9811}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D51F5A6-D367-4AFE-8DDC-42DA368A9811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A3FC10D-FF50-4D64-86B8-1B0FE5363D85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A3FC10D-FF50-4D64-86B8-1B0FE5363D85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A3FC10D-FF50-4D64-86B8-1B0FE5363D85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A3FC10D-FF50-4D64-86B8-1B0FE5363D85}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

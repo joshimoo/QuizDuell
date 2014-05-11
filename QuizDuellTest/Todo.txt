@@ -1,0 +1,7 @@
+﻿Write some tests for the api.
+Examples:
+- Test the login method to make sure the md5 salt is still acurate.
+- Test the EncodeHMAC method to make sure the HMAC key is still accurate.
+- Test for encoding problems.
+- Test the RestClient for edge cases.
+- Test all the api calls to make sure their output is still the expected output.
