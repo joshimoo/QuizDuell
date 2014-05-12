@@ -98,7 +98,7 @@ namespace QuizDuell
                 request.Method = method.ToString();
                 request.UserAgent = userAgent;
                 request.CookieContainer = cookieContainer;
-                request.Accept = "*/*";
+                //request.Accept = "*/*";
 
                 // Add Custom Headers if we have some, this includes our Authentication Header
                 if (customHeaders != null && customHeaders.Count > 0)

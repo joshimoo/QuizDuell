@@ -43,7 +43,7 @@ namespace QuizDuell
         public RestClient Client { get; set; }
         public CookieContainer Cookies { get; set; }
         public string UserAgent { get; set; }
-        public QuizDuellPlattform Plattform { get; set; }
+        public QuizDuellPlattform Plattform { get; set; } // TODO: think about only maintaining one api Platform instead of the two different versions
         private Random random = new Random();
 
         /// <summary>
@@ -100,7 +100,25 @@ namespace QuizDuell
             {
                 // NOTE: For HMAC post_params should not be urlencoded
                 var list = new List<string>(post_params.Values);
-                list.Sort();
+                list.Sort(); // NOTE: Why would they use different sort orders on different platforms ?_?
+
+                if (Plattform == QuizDuellPlattform.ANDROID)
+                {
+                    // HACK: Default Comparer Sorts Special Chars, Numbers, Characters while ANDROID requires Numbers, Special Chars, Characters
+                    list.Sort((x, y) =>
+                    {
+                        if (!Char.IsLetterOrDigit(x[0]))
+                        {
+                            if (Char.IsLetter(y[0]))
+                                return -1;
+                            else if (Char.IsDigit(y[0]))
+                                return 1;
+                        }
+                        // return x.CompareTo(y); // Does not work since it's using Culture Specific information
+                        return System.String.Compare(x, y, System.StringComparison.Ordinal);
+                    });
+                }
+
                 auth += String.Join("", list);
             }
 
@@ -156,8 +174,9 @@ namespace QuizDuell
                 values.Append(delimiter);
                 values.Append(Uri.EscapeUriString(kvp.Key));
                 values.Append("=");
-                values.Append(Uri.EscapeUriString(kvp.Value).Replace("[", "%5B").Replace("]", "%5D"));
-                //values.Append(Uri.EscapeDataString(kvp.Value).Replace("%2C", ",")); // HACK: Fix this UrlEncoding Mess, this breaks create user since mail contains @ which is not supposed to be urlencoded
+                //values.Append(Uri.EscapeUriString(kvp.Value).Replace("[", "%5B").Replace("]", "%5D"));
+                //values.Append(System.Net.WebUtility.UrlEncode(kvp.Value).Replace("%40", "@"));
+                values.Append(Uri.EscapeDataString(kvp.Value).Replace("%20", "+").Replace("%40", "@")); // HACK: Fix this UrlEncoding Mess, this breaks create user since mail contains @ which is not supposed to be urlencoded
                 delimiter = "&";
             }
 
@@ -175,15 +194,14 @@ namespace QuizDuell
         private JObject Request(string relativeUrl, IDictionary<string, string> post_params = null) { return Request(Host, relativeUrl, post_params); }
         private JObject Request(string host, string relativeUrl, IDictionary<string, string> post_params)
         {
-            // datetime.strptime('2012-11-14 14:32:30', '%Y-%m-%d %H:%M:%S')
-            // client_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             string uri = String.Format("https://{0}{1}", host, relativeUrl);
             string clientDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             string auth = GetAuthCode(host, relativeUrl, clientDate, post_params);
 
-            // Custom Header
+            // Custom Headers
             var customHeaders = new WebHeaderCollection();
             if (Plattform == QuizDuellPlattform.ANDROID) { customHeaders.Set("dt", "a"); }
+            if (Plattform == QuizDuellPlattform.ANDROID) { customHeaders.Set("Accept-Encoding", "identity"); }
             customHeaders.Set("Authorization", auth);
             customHeaders.Set("clientdate", clientDate);
 
@@ -201,9 +219,10 @@ namespace QuizDuell
             }
 
             // Make sure that we have a valid JSON Object
-            if (responseText == null || responseText.Contains("ACCESS NOT OK"))
+            if (responseText == null || responseText.Contains("ACCESS NOT OK") || responseText.Contains("Error"))
             {
-                responseText = "{\"error\": \"ACCESS NOT OK\"}";
+                // responseText = "{\"error\": \"ACCESS NOT OK\"}";
+                responseText = "{\"error\": \"" + responseText + "\"}";
             }
 
             var jObject = JObject.Parse(responseText);
@@ -238,7 +257,7 @@ namespace QuizDuell
 
             dynamic data = new JObject();
             data.name = name;
-            if (!String.IsNullOrEmpty(email)) { data.email = email; }
+            if (!String.IsNullOrEmpty(email)) { data.email = email; } // TODO: Email Creation no longer works, since changing sort order and encoding scheme.
             data.pwd = EncodePassword(password, password_salt);
 
             return Request("/users/create", data);
@@ -620,7 +639,6 @@ namespace QuizDuell
         /// </returns>
         public JObject GetGame(string game_id) { return Request("/games/" + game_id); }
 
-
         /// <summary>
         /// Lists details of specified games, but without questions and answers.
         /// </summary>
@@ -733,7 +751,6 @@ namespace QuizDuell
             return Request("/games/accept", data);
         }
 
-
         /// <summary>
         /// Gives up a game.
         /// </summary>
@@ -811,19 +828,11 @@ namespace QuizDuell
 
             dynamic data = new JObject();
 
-            // NOTE: Using alternative Endpoint
-            if (Plattform == QuizDuellPlattform.ANDROID)
-            {
-                // HACK: Not working on Android, always returns an access not okay, back to reversing :)
-                data.game_id = game_id.ToString();
-                data.cat_choice = category_id.ToString();
-                data.answers = String.Format("[{0}]", String.Join(",", answers));
-            }
-            else
-            {
-                data.answers = String.Format("[{0}]", String.Join(",", answers));
-                data.cat_choice = category_id.ToString();
-            }
+            // NOTE: Using alternative Endpoint --> which requires different sort order.
+            if (Plattform == QuizDuellPlattform.ANDROID) { data.game_id = game_id.ToString(); }
+            data.cat_choice = category_id.ToString();
+            data.answers = String.Format("[{0}]", String.Join(", ", answers)); // Android requires a space beetwen the values, IOS accepts this format too so making it general.
+            //data.answers = String.Format("[{0}]", String.Join(",", answers));
 
             /* Alternatives
             var postData = new Dictionary<string, object>()

@@ -24,9 +24,9 @@ namespace QuizDuellBot
         public QuizDuellBot()
         {
             Console.WriteLine("Loading Config File.");
-            config = QuizDuellConfig.LoadFromFile("config.json");
+            //config = QuizDuellConfig.LoadFromFile("config.json");
             //config = QuizDuellConfig.LoadFromFile("ios-config.json");
-            //config = QuizDuellConfig.LoadFromFile("apk-config.json");
+            config = QuizDuellConfig.LoadFromFile("apk-config.json");
             client = new QuizDuellApi(config);
             result = new JObject();
         }
@@ -61,7 +61,7 @@ namespace QuizDuellBot
             /// "settings": {...},
             /// "user": {...}
             /// }
-            if ((bool)result["logged_in"] == true)
+            if (result["logged_in"] != null && (bool)result["logged_in"] == true)
             {
                 // TODO: We are logged in so Start the GameLoop - Create a new Thread
                 Console.WriteLine("Successfully logged in!");
