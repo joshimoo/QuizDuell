@@ -1,3 +1,6 @@
+# Archived
+Since I haven't done anything with Quizduell in years and this is highly outdated I am archiving this repository.
+
 # QuizDuell
 Inofficial API client for the Quizduell REST API written in C#.  
 Inlcudes a simple [Bot](QuizDuellBot/QuizDuellBot.cs)  
